@@ -10,7 +10,6 @@
 ### Files trong project
 - [Notebook thực hành (Lab6_Intro_to_Transformers.ipynb)](../../notebook/Lab6/Lab6_Intro_to_Transformers.ipynb)
 - [PDF hướng dẫn (Lab6_Intro_to_Transformers.pdf)](../../notebook/Lab6/Lab6_Intro_to_Transformers.pdf)
-- [Báo cáo/Hướng dẫn (README.md)](../../notebook/Lab6/README.md)
 
 ## 2. Bài 1 — Masked Language Modeling
 
