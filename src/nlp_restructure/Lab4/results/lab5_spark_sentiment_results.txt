@@ -1,0 +1,4 @@
+Model training time: 5.3835 seconds
+Model evaluation time: 1.3769 seconds
+Test Accuracy: 0.7295
+Test F1 Score: 0.7266

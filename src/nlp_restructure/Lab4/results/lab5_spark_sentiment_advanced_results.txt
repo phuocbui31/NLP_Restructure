@@ -1,0 +1,8 @@
+Model	TrainTime(s)	EvalTime(s)	Accuracy	F1
+LogisticRegression	14.49	0.16	0.7161	0.7147
+NaiveBayes	9.18	0.13	0.7161	0.7177
+GBT	26.27	0.12	0.7033	0.6629
+NeuralNet	30.83	-2.38	0.7436	0.7433
+LogisticRegression_W2V	19.15	0.10	0.6532	0.6188
+GBT_W2V	26.97	0.09	0.6601	0.6231
+NeuralNet_W2V	16.18	0.09	0.6326	0.5061
