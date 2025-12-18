@@ -9,9 +9,39 @@
 ---
 
 ## Link to file code:
-[https://github.com/phuocbui31/NLP/blob/main/Lab7/Lab7_Dependency_Parsing.pdf](https://github.com/phuocbui31/NLP/blob/main/Lab7/Lab7_Dependency_Parsing.pdf)
+### Files trong project
+- [Notebook thực hành (Lab7_Dependency_Parsing.ipynb)](../../notebook/Lab7/Lab7_Dependency_Parsing.ipynb)
+- [PDF hướng dẫn (Lab7_Dependency_Parsing.pdf)](../../notebook/Lab7/Lab7_Dependency_Parsing.pdf)
 
 ## 2. Phần 2: Phân tích câu và Trực quan hóa
+
+### Dữ liệu & Code Implementation
+- **Câu ví dụ**: "The quick brown fox jumps over the lazy dog."
+- **Code**:
+```python
+import spacy
+from spacy import displacy
+
+# Tải mô hình tiếng Anh
+nlp = spacy.load("en_core_web_md")
+
+# Câu ví dụ
+text = "The quick brown fox jumps over the lazy dog."
+
+# Phân tích câu với pipeline của spaCy
+doc = nlp(text)
+
+# In ra bảng các phụ thuộc
+print(f"{'TEXT':<12} | {'DEP':<10} | {'HEAD TEXT':<12} | {'HEAD POS':<8} | {'CHILDREN'}")
+print("-" * 70)
+
+for token in doc:
+    children = [child.text for child in token.children]
+    print(f"{token.text:<12} | {token.dep_:<10} | {token.head.text:<12} | {token.head.pos_:<8} | {children}")
+
+# Trực quan hóa (trong notebook Jupyter)
+displacy.render(doc, style="dep", jupyter=True, options={"distance": 100})
+```
 
 ### Câu hỏi & Trả lời
 
@@ -41,6 +71,19 @@
 - `token.head.pos_`: Part-of-Speech tag của token head.
 - `token.children`: Một iterator chứa các token con (dependent) của token hiện tại.
 
+### Code Implementation
+```python
+text = "Apple is looking at buying U.K. startup for $1 billion"
+doc = nlp(text)
+
+print(f"{'TEXT':<12} | {'DEP':<10} | {'HEAD TEXT':<12} | {'HEAD POS':<8} | {'CHILDREN'}")
+print("-" * 70)
+
+for token in doc:
+    children = [child.text for child in token.children]
+    print(f"{token.text:<12} | {token.dep_:<10} | {token.head.text:<12} | {token.head.pos_:<8} | {children}")
+```
+
 ### Kết quả phân tích câu "Apple is looking at buying U.K. startup for $1 billion"
 
 Kết quả cho thấy:
@@ -57,6 +100,27 @@ Kết quả cho thấy:
 
 ### 4.1. Bài toán: Tìm chủ ngữ và tân ngữ của một động từ
 
+### Code Implementation
+```python
+text = "The cat chased the mouse and the dog watched them."
+doc = nlp(text)
+
+for token in doc:
+    if token.pos_ == "VERB":
+        verb = token.text
+        subject = ""
+        obj = ""
+        
+        for child in token.children:
+            if child.dep_ == "nsubj":
+                subject = child.text
+            if child.dep_ == "dobj":
+                obj = child.text
+        
+        if subject and obj:
+            print(f"Found Triplet: ({subject}, {verb}, {obj})")
+```
+
 **Kết quả:**  
 Với câu "The cat chased the mouse and the dog watched them.", hàm tìm được:
 - Found Triplet: (cat, chased, mouse)
@@ -66,6 +130,23 @@ Với câu "The cat chased the mouse and the dog watched them.", hàm tìm đư�
 - "watched" cũng là động từ nhưng chỉ có chủ ngữ "dog", không có tân ngữ trực tiếp (dobj) nên không được in ra
 
 ### 4.2. Bài toán: Tìm các tính từ bổ nghĩa cho một danh từ
+
+### Code Implementation
+```python
+text = "The big, fluffy white cat is sleeping on the warm mat."
+doc = nlp(text)
+
+for token in doc:
+    if token.pos_ == "NOUN":
+        adjectives = []
+        
+        for child in token.children:
+            if child.dep_ == "amod":
+                adjectives.append(child.text)
+        
+        if adjectives:
+            print(f"Danh từ '{token.text}' được bổ nghĩa bởi các tính từ: {adjectives}")
+```
 
 **Kết quả:**  
 Với câu "The big, fluffy white cat is sleeping on the warm mat.", hàm tìm được:
@@ -86,6 +167,24 @@ Với câu "The big, fluffy white cat is sleeping on the warm mat.", hàm tìm �
 - Tìm token có quan hệ `ROOT` và POS tag là `VERB`
 - Trả về Token là động từ chính, hoặc `None` nếu không tìm thấy
 
+### Code Implementation
+```python
+def find_main_verb(doc):
+    for token in doc:
+        if token.dep_ == "ROOT" and token.pos_ == "VERB":
+            return token
+    return None
+
+# Test hàm
+test_sentence = "The student studied hard and passed the exam."
+doc_test = nlp(test_sentence)
+main_verb = find_main_verb(doc_test)
+if main_verb:
+    print(f"Main verb: {main_verb.text}")
+else:
+    print("Not found main verb")
+```
+
 **Kết quả:**  
 Với câu "The student studied hard and passed the exam.", hàm tìm được động từ chính là "studied" (động từ đầu tiên có quan hệ ROOT).
 
@@ -96,6 +195,35 @@ Với câu "The student studied hard and passed the exam.", hàm tìm được �
 - Với mỗi danh từ, thu thập các từ bổ nghĩa (det, amod, compound)
 - Sắp xếp các từ theo thứ tự trong câu
 - Trả về danh sách các cụm danh từ
+
+### Code Implementation
+```python
+def extract_noun_chunks(doc):
+    noun_chunks = []
+    
+    for token in doc:
+        if token.pos_ == "NOUN":
+            chunk_tokens = []
+            
+            for child in token.children:
+                if child.dep_ in ["det", "amod", "compound"]:
+                    chunk_tokens.append(child)
+            
+            chunk_tokens.append(token)
+            chunk_tokens.sort(key=lambda t: t.i)
+            
+            chunk_text = " ".join([t.text for t in chunk_tokens])
+            noun_chunks.append(chunk_text)
+    
+    return noun_chunks
+
+test_sentence = "The big, fluffy white cat is sleeping on the warm mat."
+doc_test = nlp(test_sentence)
+chunks = extract_noun_chunks(doc_test)
+print("The noun chunks:")
+for chunk in chunks:
+    print(f"  - {chunk}")
+```
 
 **Kết quả:**  
 Với câu "The big, fluffy white cat is sleeping on the warm mat.", hàm tìm được:
@@ -111,6 +239,36 @@ Kết quả từ hàm tự viết có thể khác với `doc.noun_chunks` của 
 - Bắt đầu từ token đã cho
 - Đi ngược lên head cho đến khi gặp ROOT
 - Trả về danh sách các token trên đường đi
+
+### Code Implementation
+```python
+def get_path_to_root(token):
+    path = [token]
+    current = token
+    
+    while current.head != current:
+        current = current.head
+        path.append(current)
+        if current.dep_ == "ROOT":
+            break
+    
+    return path
+
+test_sentence = "The quick brown fox jumps over the lazy dog."
+doc_test = nlp(test_sentence)
+
+dog_token = None
+for token in doc_test:
+    if token.text == "dog":
+        dog_token = token
+        break
+
+if dog_token:
+    path = get_path_to_root(dog_token)
+    print(f"Path from '{dog_token.text}' upto ROOT:")
+    for i, token in enumerate(path):
+        print(f"  {i+1}. {token.text} ({token.dep_})")
+```
 
 **Kết quả:**  
 Với câu "The quick brown fox jumps over the lazy dog." và token "dog":
