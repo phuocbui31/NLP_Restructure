@@ -672,11 +672,6 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
 
 
 ### Files trong project
-
-```
-Lab5/part4/
-├── lab5_rnn_ner.ipynb           # Notebook chính
-├── README.md                     # Báo cáo (file này)
-├── best_ner_model.pt            # Model weights (sau khi train)
-└── ner_model_checkpoint.pt      # Full checkpoint (sau khi train)
-```
+- [Notebook chính (lab5_rnn_ner.ipynb)](../../notebook/Lab5/part4/lab5_rnn_ner.ipynb) - Source code đầy đủ cho bài thực hành
+- [Báo cáo/Hướng dẫn (README.md)](../../notebook/Lab5/part4/README.md)
+- [PDF hướng dẫn (lab5_rnn_for_ner.pdf)](../../notebook/Lab5/part4/lab5_rnn_for_ner.pdf)
