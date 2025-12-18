@@ -1,0 +1,1 @@
+Thư mục chứa data được sử dụng cho các bài thực hành, không đẩy lên github.

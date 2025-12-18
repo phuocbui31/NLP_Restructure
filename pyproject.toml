@@ -1,0 +1,24 @@
+[project]
+name = "nlp-restructure"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11, <3.14"
+dependencies = [
+    "gensim>=4.4.0",
+    "loguru>=0.7.3",
+    "numpy>=2.3.4",
+    "pyspark==3.3.4",
+    "scikit-learn>=1.7.2",
+    "spacy>=3.8.7",
+    "tensorflow>=2.20.0",
+    "tokenizers>=0.22.1",
+    "torch>=2.9.0"
+]
+
+[project.scripts]
+nlp-restructure = "nlp_restructure:main"
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
