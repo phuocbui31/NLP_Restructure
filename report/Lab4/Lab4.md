@@ -2,29 +2,71 @@
 
 ## 1. Giải thích chi tiết các bước triển khai
 
+## 1. Dataset và Source Code
+
+### Dataset
+- **Tên dataset**: Twitter Financial News Sentiment (TFNS)
+- **File**: `data/sentiments.csv`
+- **Mô tả**: Bộ dữ liệu chứa các tweet về tin tức tài chính được gán nhãn cảm xúc.
+- **Nhãn (Sentiment)**:
+  - `0` / `-1`: Tiêu cực (Negative/Bearish)
+  - `1` / `1`: Tích cực (Positive/Bullish)
+  - `2`: Trung tính (Neutral) - *Lưu ý: Trong bài lab này ta lọc bỏ nhãn trung tính hoặc chỉ dùng binary classification.*
+
 ### Task 1. Scikit-learn TextClassifier
 
-*   Xây dựng class `TextClassifier` trong `src/models/text_classifier.py` với các phương thức:
+*   Xây dựng class `TextClassifier` trong [src/nlp_restructure/Lab4/src/models/text_classifier.py](../../src/nlp_restructure/Lab4/src/models/text_classifier.py) với các phương thức `fit`, `predict`, `evaluate`.
 
-    *   `fit`: Huấn luyện mô hình Logistic Regression trên dữ liệu văn bản đầu vào đã vector hóa.
-    *   `predict`: Dự đoán cho tập dữ liệu mới.
-    *   `evaluate`: Tính toán các chỉ số đánh giá (Accuracy, Precision, Recall, F1-score).
+#### Code minh họa:
+```python
+class TextClassifier:
+    def __init__(self, vectorizer: Vectorizer):
+        self.vectorizer = vectorizer
+        self._model = None
+
+    def fit(self, texts: List[str], labels: List[int]):
+        X = self.vectorizer.fit_transform(texts)
+        self._model = LogisticRegression(solver='liblinear')
+        self._model.fit(X, labels)
+```
 
 ### Task 2. Evaluation
 
-*   Tạo file `test/lab5_test.py` với các nhiệm vụ:
+*   Tạo file [test/Lab4/lab5_test.py](../../test/Lab4/lab5_test.py) để kiểm thử mô hình với dữ liệu mẫu nhỏ.
 
-    *   Chia tập train/test.
-    *   Tiền xử lý văn bản bằng RegexTokenizer và CountVectorizer.
-    *   Huấn luyện, dự đoán và đánh giá mô hình TextClassifier trên dữ liệu có sẵn.
+#### Code minh họa:
+```python
+# Instantiate your RegexTokenizer and CountVectorizer
+tokenizer = RegexTokenizer()
+vectorizer = CountVectorizer(tokenizer=tokenizer)
+
+# Instantiate your TextClassifier with the vectorizer
+classifier = TextClassifier(vectorizer)
+
+# Train the classifier using the training data
+classifier.fit(X_train, y_train)
+
+# Evaluate
+metrics = classifier.evaluate(y_test, y_pred)
+```
 
 ### Task 3. Sentiment Analysis with PySpark
 
-*   Chạy script test/lab5_spark_sentiment_analysis.py:
-    *   Đọc dữ liệu cảm xúc từ file CSV.
-    *   Tiền xử lý: chuẩn hóa nhãn, loại bỏ NA, chia tập train/test.
-    *   Xây dựng pipeline Spark ML gồm các bước: Tokenizer, StopWordsRemover, HashingTF, IDF, LogisticRegression.
-    *   Huấn luyện và đánh giá mô hình trên tập dữ liệu với Spark.
+*   Chạy script [test/Lab4/lab5_spark_sentiment_analysis.py](../../test/Lab4/lab5_spark_sentiment_analysis.py) để thực hiện phân tích cảm xúc trên tập dữ liệu lớn hơn.
+
+#### Code minh họa (Spark ML Pipeline):
+```python
+# 3. Build Preprocessing Pipeline
+tokenizer = Tokenizer(inputCol="text", outputCol="words")
+stopwordsRemover = StopWordsRemover(inputCol="words", outputCol="filtered_words")
+hashingTF = HashingTF(inputCol="filtered_words", outputCol="raw_features", numFeatures=10000)
+idf = IDF(inputCol="raw_features", outputCol="features")
+
+# 4. Train the Model with timing
+lr = LogisticRegression(maxIter=10, regParam=0.001, featuresCol="features", labelCol="label")
+pipeline = Pipeline(stages=[tokenizer, stopwordsRemover, hashingTF, idf, lr])
+model = pipeline.fit(train_df)
+```
 
 ### Task 4. Evaluating and Improving Model Performance
 

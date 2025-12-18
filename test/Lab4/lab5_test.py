@@ -49,7 +49,7 @@ for k, v in metrics.items():
 	outputs.append(f"{k}: {v:.3f}")
 
 # Save to the file
-result_dir = Path(__file__).parents[1] / 'results'
+result_dir = Path(__file__).parents[2] / 'src/nlp_restructure/Lab4/results'
 result_dir.mkdir(parents=True, exist_ok=True)
 output_path = result_dir / "lab5_test_results.txt"
 
