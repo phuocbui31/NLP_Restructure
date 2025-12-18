@@ -1,0 +1,31 @@
+Lab 4: WordEmbedder Test
+Execution time: 2025-11-02 15:38:56
+==================================================
+
+Model loaded successfully
+
+1. Vector for 'king':
+Shape: (100,)
+First 5 values: [-0.32307 -0.87616  0.21977  0.25268  0.22976]
+
+2. Word similarities:
+king-queen similarity: 0.7508
+king-man similarity: 0.5119
+
+3. Most similar words to 'computer':
+1. computers       (similarity: 0.8752)
+2. software        (similarity: 0.8373)
+3. technology      (similarity: 0.7642)
+4. pc              (similarity: 0.7366)
+5. hardware        (similarity: 0.7290)
+6. internet        (similarity: 0.7287)
+7. desktop         (similarity: 0.7234)
+8. electronic      (similarity: 0.7222)
+9. systems         (similarity: 0.7198)
+10. computing       (similarity: 0.7142)
+
+4. Document embedding:
+Input sentence: 'The queen rules the country.'
+Document vector shape: (100,)
+First 5 values: [-0.1380128  -0.178466    0.69524601 -0.17787301 -0.0691316 ]
+Is zero vector: False
